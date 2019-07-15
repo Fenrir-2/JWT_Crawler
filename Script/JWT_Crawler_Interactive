@@ -20,7 +20,7 @@ printf "Enter password:\n> "
 read password
 
 printf "Trying to get token from: $URL$tok_gen_location with data: {\"username\":\"$username\",\"password\":\"$password\"}"
-#TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":$username,"password":$password}' $URL$tok_gen_location | jq -r)
+TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":$username,"password":$password}' $URL$tok_gen_location | jq -r)
 printf "\nToken should be "$TOKEN"\n"
 
 #TODO: check file has been created, is readable and empty. If not empty,
@@ -37,7 +37,7 @@ for word in `cat "$wordlist"`
 do
     printf "\nGetting $word" >> "$outputFile"
     printf "\nGetting $word"
-    #curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" $URL$word >> $outputFile
+    curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" $URL$word >> $outputFile
 done
 
 printf "\nResult is in file $outputFile\n"
