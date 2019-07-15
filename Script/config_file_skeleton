@@ -1,0 +1,12 @@
+.URL:
+    #"http://10.10.10.115"
+.GENERATOR:
+    #"/login"
+.USER:
+    #"admin"
+.PASS:
+    #"admin"
+.OUTPUT:
+    #"./output_file"
+.WORDLIST:
+    #"/usr/share/lists/seclists/rockyou.txt"
