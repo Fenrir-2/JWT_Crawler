@@ -20,7 +20,7 @@ printf "Enter URL:\n> "
 read URL
 printf "Enter TOKEN generator location:\n> "
 #TODO: add leading / if not detected
-#TODO: ask for data
+#TODO: ask for verification of auth data
 read tok_gen_location
 
 printf "Enter username:\n> "
