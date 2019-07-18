@@ -3,9 +3,18 @@
 #TODO: File based config
 #      With parsing
 
-printf "[*]     JWT Crawler\n"
-printf "[*]     Fenrir\n"
-printf "\n"
+printf "
+     ___      ________    _____                __       
+ __ / / | /| / /_  __/   / ___/______ __    __/ /__ ____
+/ // /| |/ |/ / / /     / /__/ __/ _ \`/ |/|/ / / -_) __/
+\___/ |__/|__/ /_/______\___/_/  \_,_/|__,__/_/\__/_/   
+   ____                                        
+  / __/__ ___  ____(_)___                               
+ / _// -_) _ \/ __/ / __/                               
+/_/  \__/_//_/_/ /_/_/                                  
+\n\n\n"
+printf "[*]     JWT_Crawler\n"
+printf "[*]     Fenrir\n\n"
 printf "Enter URL:\n> "
 #TODO: add http:// if not detected
 read URL
