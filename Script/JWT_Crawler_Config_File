@@ -1,0 +1,52 @@
+#! /bin/bash
+
+printf "
+     ___      ________    _____                __       
+ __ / / | /| / /_  __/   / ___/______ __    __/ /__ ____
+/ // /| |/ |/ / / /     / /__/ __/ _ \`/ |/|/ / / -_) __/
+\___/ |__/|__/ /_/______\___/_/  \_,_/|__,__/_/\__/_/   
+   ____                                        
+  / __/__ ___  ____(_)___                               
+ / _// -_) _ \/ __/ / __/                               
+/_/  \__/_//_/_/ /_/_/                                  
+\n\n\n"
+printf "[*]     JWT_Crawler\n"
+printf "[*]     Fenrir\n\n"
+
+#TODO: add http:// if not detected
+URL=""
+#TODO: add leading / if not detected
+tok_gen_location=""
+username=""
+password=""
+#TODO: Check if file exists, is readable, and not empty (using wc?). Else quit 
+output_file=""
+#TODO: check file has been created, is readable and empty. If not empty,
+#Ask to continue
+wordlist=""
+
+if [ $# -eq 2 -a "$1" == "-f" ]
+then
+    printf "Parsing info from file: "$2"\n"
+    #TODO: Parsing :3
+    exit
+else
+    printf "Usage: JWT_Crawler_Config_File -f config_file\n"
+    exit
+fi
+
+printf "Trying to get token from: $URL$tok_gen_location with data: {\"username\":\"$username\",\"password\":\"$password\"}"
+TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":$username,"password":$password}' $URL$tok_gen_location | jq -r)
+printf "\nToken should be "$TOKEN"\n"
+
+
+printf "Target URL is "$URL > $outputFile
+#TODO: Recursive mode?
+for word in `cat "$wordlist"`
+do
+    printf "\nGetting $word" >> "$outputFile"
+    printf "\nGetting $word"
+    curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" $URL$word >> $outputFile
+done
+
+printf "\nResult is in file $outputFile\n"
