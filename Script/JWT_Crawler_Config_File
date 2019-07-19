@@ -15,14 +15,14 @@ printf "[*]     Fenrir\n\n"
 
 #TODO: add http:// if not detected
 URL=""
-#TODO: add leading / if not detected
+#TODO: add trailing / if not detected
 tok_gen_location=""
 username=""
 password=""
-#TODO: Check if file exists, is readable, and not empty (using wc?). Else quit 
-output_file=""
 #TODO: check file has been created, is readable and empty. If not empty,
 #Ask to continue
+output_file=""
+#TODO: Check if file exists, is readable, and not empty (using wc?). Else quit 
 wordlist=""
 
 if [ $# -eq 2 -a "$1" == "-f" ]
