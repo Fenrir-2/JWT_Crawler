@@ -17,9 +17,7 @@ URL=""
 tok_gen_location=""
 username=""
 password=""
-#TODO: check file has been created, is readable and empty. If not empty,
-#Ask to continue
-output_file=""
+outputFile=""
 wordlist=""
 
 if [ $# -eq 2 -a "$1" == "-f" ]
@@ -33,11 +31,11 @@ else
 fi
 
 #URL sanitization
-if [ ! ${URL:0:7} == "http://" -a ! ${URL:0:8} == "https://" ] 
+if [ ${URL:0:7} != "http://" -o ${URL:0:8} != "https://" ] 
 then 
     URL="http://"$URL
 fi
-if [ ! ${URL:$((${#URL}-1)):1} == "/" ]
+if [ ${URL:$((${#URL}-1)):1} != "/" ]
 then
     URL=$URL/
 fi
@@ -57,6 +55,51 @@ then
 else
     echo "Word list has been found and is valid."
 fi
+
+#In case the output file already exists
+if [ -f $outputFile ]
+then
+    echo "The output file already exists."
+    echo "What do you want to do?[c]ontinue, [r]ename:"
+    read answer
+
+    while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'c' ]
+    do
+        echo "What do you want to do?[c]ontinue, [r]ename:"
+        read answer
+    done
+
+    if [ ${answer:0:1} == 'r']
+    then
+        read outputFile
+    fi
+fi
+
+#Checking if created and if writeable
+touch $outputFile
+
+while [ ! -w $outputFile ]
+do 
+    echo "Output file is not writeable"
+    echo "What do you want to do?[e]xit, [r]ename:"
+    read answer
+
+    while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'e' ]
+    do
+        echo "What do you want to do?[e]xit, [r]ename:"
+        read answer
+    done
+    if [ ${answer:0:1} == 'r']
+    then
+        read outputFile
+        touch $outputFile
+    fi
+    if [ ${answer:0:1} == 'e']
+    then
+        exit 1
+    fi
+
+done
 
 printf "Trying to get token from: $URL$tok_gen_location with data: {\"username\":\"$username\",\"password\":\"$password\"}"
 TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":$username,"password":$password}' $URL$tok_gen_location | jq -r)
