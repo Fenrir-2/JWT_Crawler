@@ -37,8 +37,11 @@ fi
 #URL sanitization
 if [ ! ${URL:0:7} == "http://" -a ! ${URL:0:8} == "https://" ] 
 then 
-    echo "add http"
     URL="http://"$URL
+fi
+if [ ! ${URL:$((${#URL}-1)):1} == "/" ]
+then
+    URL=$URL/
 fi
 
 printf "Trying to get token from: $URL$tok_gen_location with data: {\"username\":\"$username\",\"password\":\"$password\"}"
