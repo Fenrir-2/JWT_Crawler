@@ -20,7 +20,6 @@ password=""
 #TODO: check file has been created, is readable and empty. If not empty,
 #Ask to continue
 output_file=""
-#TODO: Check if file exists, is readable, and not empty (using wc?). Else quit 
 wordlist=""
 
 if [ $# -eq 2 -a "$1" == "-f" ]
