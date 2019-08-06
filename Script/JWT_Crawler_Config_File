@@ -31,9 +31,114 @@ then
 
     readarray -t confArray < $2
 
+    #TODO: change config file format for a simple one?
+    counter=0
+    parsingOver=0
+    while [ $parsingOver -lt 5 ]
+    do
+        argLine=`echo ${confArray[$counter]} | xargs`
+        case $argLine in 
+            ".URL:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid URL found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                URL=${argLine:1:$((${#argLine}-1))}
+                parsingOver=$(($parsingOver+1))
+                echo "Found URL: "$URL
+                ;;
+            ".GENERATOR:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid token generator location found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                tok_gen_location=${argLine:1:$((${#argLine}-1))}
+                parsingOver=$(($parsingOver+1))
+                echo "Found token generator location: "$tok_gen_location
+                ;;
+            ".USER:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid username found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                username=${argLine:1:$((${#argLine}-1))}
+                parsingOver=$(($parsingOver+1))
+                echo "Found username: "$username
+                ;;
+            ".PASS:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid password found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                password=${argLine:1:$((${#argLine}-1))}
+                parsingOver=$(($parsingOver+1))
+                echo "Found username: "$password
+                ;;
+            ".OUTPUT:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid output file found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                outputFile=${argLine:1:$((${#argLine}-1))}
+                echo "Found username: "$outputFile
+                ;;
+            ".WORDLIST:")
+                counter=$(($counter+1))
+                #Removing the whitespaces
+                argLine=`echo ${confArray[$counter]} | xargs`
+                #Checking the input is valid
+                if [ ${argLine:0:1} != "#" ]
+                then
+                    echo "Invalid word list found. Found: "$argLine" instead"
+                    exit 1
+                fi
+                #Skipping the '#"' and the last ' " '
+                wordlist=${argLine:1:$((${#argLine}-1))}
+                parsingOver=$(($parsingOver+1))
+                echo "Found username: "$wordlist
+                ;;
+            *)
+                echo "Found unrecognized keyword in line: " ${confArray[$counter]}
+                echo "inside config file "$2 
+                echo "Exiting..."
+                exit 1
+                ;;
+        esac
+        counter=$(($counter+1))
+    done
 
+    echo "Done parsing config file. Moving on..."
 
-    #TODO: Parsing :3
     #exit
 else
     printf "Usage: JWT_Crawler_Config_File -f config_file\n"
