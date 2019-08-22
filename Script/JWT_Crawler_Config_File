@@ -96,7 +96,7 @@ then
                 #Skipping the '#"' and the last ' " '
                 password=${argLine:1:$((${#argLine}-1))}
                 parsingOver=$(($parsingOver+1))
-                echo "Found username: "$password
+                echo "Found password: "$password
                 ;;
             ".OUTPUT:")
                 counter=$(($counter+1))
@@ -110,7 +110,7 @@ then
                 fi
                 #Skipping the '#"' and the last ' " '
                 outputFile=${argLine:1:$((${#argLine}-1))}
-                echo "Found username: "$outputFile
+                echo "Found output file: "$outputFile
                 ;;
             ".WORDLIST:")
                 counter=$(($counter+1))
@@ -125,7 +125,7 @@ then
                 #Skipping the '#"' and the last ' " '
                 wordlist=${argLine:1:$((${#argLine}-1))}
                 parsingOver=$(($parsingOver+1))
-                echo "Found username: "$wordlist
+                echo "Found word list: "$wordlist
                 ;;
             *)
                 echo "Found unrecognized keyword in line: " ${confArray[$counter]}
