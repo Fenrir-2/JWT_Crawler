@@ -174,13 +174,13 @@ fi
 #In case the output file already exists
 if [ -f $outputFile ]
 then
-    echo "The output file already exists."
-    echo "What do you want to do?[c]ontinue, [r]ename:"
+    printf "The output file already exists.\n"
+    printf "What do you want to do?[c]ontinue, [r]ename: "
     read answer
 
     while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'c' ]
     do
-        echo "What do you want to do?[c]ontinue, [r]ename:"
+        printf "What do you want to do?[c]ontinue, [r]ename: "
         read answer
     done
 
@@ -193,23 +193,23 @@ fi
 if [ -n $outputFile ]
 then
     #Checking if created and if writeable
-    touch $outputFile
+    touch $outputFile 2>/dev/null
 
     while [ ! -w $outputFile ]
     do 
-        echo "Output file is not writeable"
-        echo "What do you want to do?[e]xit, [r]ename:"
+        printf "Output file is not writeable\n"
+        printf "What do you want to do?[e]xit, [r]ename, [c]ontinue: "
         read answer
 
-        while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'e' ]
+        while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'e' -o ${answer:0:1} != 'c' ]
         do
-            echo "What do you want to do?[e]xit, [r]ename:"
+            printf "What do you want to do?[e]xit, [r]ename, [c]ontinue: "
             read answer
         done
         if [ ${answer:0:1} == 'r']
         then
             read outputFile
-            touch $outputFile
+            touch $outputFile 2>/dev/null
         fi
         if [ ${answer:0:1} == 'e']
         then
@@ -230,6 +230,7 @@ then
 else
     printf "Target URL is "$URL 
 fi
+
 #TODO: Recursive mode?
 for word in `cat "$wordlist"`
 do
