@@ -1,0 +1,166 @@
+#! /bin/bash
+
+printf "
+     ___      ________    _____                __
+ __ / / | /| / /_  __/   / ___/______ __    __/ /__ ____
+/ // /| |/ |/ / / /     / /__/ __/ _ \`/ |/|/ / / -_) __/
+\___/ |__/|__/ /_/______\___/_/  \_,_/|__,__/_/\__/_/
+   ____
+  / __/__ ___  ____(_)___
+ / _// -_) _ \/ __/ / __/
+/_/  \__/_//_/_/ /_/_/
+\n\n\n"
+printf "[*]     JWT_Crawler\n"
+printf "[*]     Fenrir\n\n"
+
+URL=""
+tok_gen_location=""
+username=""
+password=""
+outputFile=""
+wordlist=""
+
+#TODO: Parameters parsing
+#TODO: Debug mode?
+if [ $# -eq 12 -o $# -eq 10 -a "$1" != "-h" ]
+then
+    while [ $# -gt 0 ]
+    do
+        case $1 in
+            "-U")
+                printf "Found URL: $2\n"
+                URL=$2
+                shift;;
+            "-t")
+                printf "Found generator: $2\n"
+                tok_gen_location=$2
+                shift;;
+            "-u")
+                printf "Found username: $2\n"
+                username=$2
+                shift;;
+            "-p")
+                printf "Found password: $2\n"
+                password=$2
+                shift;;
+            "-w")
+                printf "Found wordlist file: $2\n"
+                wordlist=$2
+                shift;;
+            "-o")
+                printf "Found output file: $2\n"
+                outputFile=$2
+                shift;;
+            *)
+                printf "Unrecognized keyword:$1\n"
+                printf "Stopping ..."
+                exit 1;;
+        esac
+        shift
+    done
+else
+    printf "Usage: JWT_Crawler_Parameters -h for help\n"
+    printf "Usage: JWT_Crawler_Parameters -U URL -t TOKEN_GENERATOR_URL -u USER -p PASS -w WORDLIST [-o OUT_FILE]\n" 
+    exit 1
+fi
+
+#URL sanitization
+if [ ${URL:0:7} != "http://" -o ${URL:0:8} != "https://" ] 
+then 
+    URL="http://"$URL
+fi
+if [ ${URL:$((${#URL}-1)):1} != "/" ]
+then
+    URL=$URL/
+fi
+
+#Checking if word list exists
+if [ ! -r $wordlist ]
+then
+    echo "Unable to read wordlist!"
+    exit 1
+fi
+
+#Checking if word list isn't empty
+if [ `wc -c $wordlist | sed s/$wordlist//g` -eq 0 ]
+then 
+    echo "Word list is empty."
+    exit 1
+else
+    echo "Word list has been found and is valid."
+fi
+
+#In case the output file already exists
+if [ -f $outputFile ]
+then
+    printf "The output file already exists. \n"
+    printf "What do you want to do?[c]ontinue, [r]ename: "
+    read answer
+
+    while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'c' ]
+    do
+        printf "What do you want to do?[c]ontinue, [r]ename: "
+        read answer
+    done
+
+    if [ ${answer:0:1} == 'r']
+    then
+        read outputFile
+    fi
+fi
+
+if [ -n $outputFile ]
+then
+    #Checking if created and if writeable
+    touch $outputFile 2>/dev/null
+
+    while [ ! -w $outputFile ]
+    do 
+        printf "Output file is not writeable\n"
+        printf "What do you want to do?[e]xit, [r]ename, [c]ontinue: "
+        read answer
+
+        while [ ${answer:0:1} != 'r' -o ${answer:0:1} != 'e' -o ${answer:0:1} != 'c' ]
+        do
+            printf "What do you want to do?[e]xit, [r]ename, [c]ontinue: "
+            read answer
+        done
+        if [ ${answer:0:1} == 'r']
+        then
+            read outputFile
+            touch $outputFile 2>/dev/null
+        fi
+        if [ ${answer:0:1} == 'e']
+        then
+            exit 1
+        fi
+
+    done
+
+fi
+
+printf "Trying to get token from: $URL$tok_gen_location with data: {\"username\":\"$username\",\"password\":\"$password\"}"
+TOKEN=$(curl -s -X POST -H 'Accept: application/json' -H 'Content-Type: application/json' --data '{"username":$username,"password":$password}' $URL$tok_gen_location | jq -r)
+printf "\nToken should be "$TOKEN"\n"
+
+if [ -n $outputFile ]
+then
+    printf "Target URL is "$URL > $outputFile
+else
+    printf "Target URL is "$URL 
+fi
+#TODO: Recursive mode?
+for word in `cat "$wordlist"`
+do
+    if [ -n $outputFile ]
+    then
+        printf "\nGetting $word" >> $outputFile
+    fi
+    printf "\nGetting $word"
+    curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" $URL$word >> $outputFile
+done
+
+if [ -n $outputFile ]
+then
+    printf "\nResult is in file $outputFile\n"
+fi
